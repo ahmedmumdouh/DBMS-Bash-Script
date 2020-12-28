@@ -1,4 +1,4 @@
-# DBMS-Bash-Shell-Scripting
+# DBMS-Bash-Scripting
 
 ## Project Notes : 
 
