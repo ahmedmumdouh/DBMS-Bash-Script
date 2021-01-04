@@ -10,7 +10,7 @@ do
 	
 	if [[ -d DB/$db ]]; then
 		clear
-		echo Tables of Database : $db $'\n '$(find ./DB/$db/* -type f 2> error.log | cut -d'/' -f4 )
+		echo Tables of Database [ $db ] :$'\n '$(find ./DB/$db/* -type f 2>>error.log | cut -d'/' -f4 2>>error.log )
 		echo ------------------------------------------------------------------------------
 		select varuse in "Create Table" "Drop Table" "Update Table" "Insert into table" "Delete from table" "Select from table" "Display Table" "Back"
 		do
@@ -22,18 +22,19 @@ do
 					bash tableactions/droptable.sh $db
 					;;
 				"Update Table" )  
-					tableactions/updatetable.sh $db
+					bash tableactions/updatetable.sh $db
 					;;
 				"Insert into table")
-					tableactions/insert.sh $db
+					bash tableactions/insert.sh $db
 					;;
 				"Delete from table" )  
-						bash tableactions/delete.sh $db
+					bash tableactions/delete.sh $db
 					;;
 				"Select from table" )
-						bash tableactions/select.sh $db
+					bash tableactions/select.sh $db
 					;;
-				"Display Table" ) bash tableactions/disptable.sh $db
+				"Display Table" ) 
+					bash tableactions/disptable.sh $db
 					;;
 				"Back" )  clear && exit
 					;;
