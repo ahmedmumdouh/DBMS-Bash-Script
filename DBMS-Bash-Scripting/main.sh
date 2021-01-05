@@ -4,28 +4,45 @@ do
 	clear
 	echo DataBase List :$'\n '$(find ./DB/ -maxdepth 1 -type d 2>>error.log | cut -d'/' -f3 2>>error.log )
 	echo ------------------------------------------------------------------------------
-	select choice in createDB renameDB dropDB  useExistDB SQLMode Exit
+	select choice in "Create DataBase" "Rename DataBase" "Drop DataBase"  "Use DataBase" "Use SQLMode" "Exit"
 	do
 		case $choice in
-			createDB )  bash dbactions/createdb.sh 
+			"Create DataBase" )  bash dbactions/createdb.sh 
 				;;
-			renameDB )  bash dbactions/renamedb.sh
+			"Rename DataBase" )  bash dbactions/renamedb.sh
 				;;
-			dropDB )  bash dbactions/dropdb.sh
+			"Drop DataBase" )  bash dbactions/dropdb.sh
 				;;
 
-			useExistDB )  bash dbactions/usedatabase.sh
+			"Use DataBase" )  bash dbactions/usedatabase.sh
 				;;
-			SQLMode )  #welcome Statement 
-clear && echo "  Welcome to Our SQLMode ... " && echo ------------------------------------------------------------------------------ && bash mainSQL.sh
+			"Use SQLMode" )  #welcome Statement 
+				select varuse in "Use SQL Mode" "Cancel" 
+				do
+					case $varuse in
+						"Use SQL Mode" )	
+				clear && echo "  Welcome to Our SQLMode ... 😀" && echo ------------------------------------------------------------------------------ && bash mainSQL.sh
+							;;
+						"Cancel" )	
+							read -p "Canceled ... 😉 `echo $'\n> 'Press any key to Refresh ... `"
+							;;
+						
+						* ) read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" 
+							;;
+					esac
+					clear && break 
+				done
 				;;
-			Exit ) clear && exit
+			"Exit" ) clear && exit
 				;;
-			* ) read -p "InValid Input : `echo $'\n> '`Press Any Key To Restart ..." 
-				clear && break
+			* ) read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" && break
+				
 				;;
 		esac
 		clear && break ; 
 
 	done
 done
+
+
+
