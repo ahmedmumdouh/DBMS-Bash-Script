@@ -6,7 +6,7 @@ read -p "Enter TB(Display) Name : " dispt && location=DB/$1/$dispt && if ! [[ $d
 	fi
 
 if [[ -f "$location" ]]; then
-	let length=$( sed '1,2d' "$location" | wc -l | cut -f 1 )
+	let length=$( sed '1d' "$location" | wc -l | cut -f 1 )
 	#let fields=$(head -1 "$location" | sed -e 's/,/ /g' | wc -w)
 	let count=0
 	echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -16,7 +16,7 @@ if [[ -f "$location" ]]; then
 	    while [ $count -lt $length ]
 	    do
 		echo -n "+ "
-		sed -n "$((count+3))p" "$location" | awk 'BEGIN{ RS = "," } {print $1 }' | awk 'BEGIN{ORS="\t|"} {print $0 }' #sed -e 's/,/\t|/g' 
+		sed -n "$((count+2))p" "$location" | awk 'BEGIN{ RS = "," } {print $1 }' | awk 'BEGIN{ORS="\t|"} {print $0 }' #sed -e 's/,/\t|/g' 
 		if (( count == length-1 ))
 		then
 		    echo $'\n'"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
