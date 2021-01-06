@@ -18,23 +18,17 @@ if ! [[ $1 =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
 then   
     echo "invalid database name"
 
+#if the directory exists will ask the user
+#if they are sure they want to deletethe db
+#the input has to be either yY or nN
 elif [[ -d ./DB/$1 ]]
 then
     while [ true ]
     do
-        # echo "Using database $1"
-        # echo "To go back to databases press [B/b]"
-        # echo ""
+        echo "Using database $1"
+        echo "To go back to databases press [B/b]"
+        echo ""
         read -p ">($1) " -ra inputLine
-
-        # let len=${#inputLine[*]}
-        # if ! [[ ${inputLine[$len-1]} =~ [\;]$ ]]
-        # then
-        #     echo "invalid command"
-        #     continue
-        # fi
-
-        #if input is [B/b] will go back to database operations
         if [[ ${inputLine[0]} =~ ^[Bb]$ ]]
         then
             break
@@ -43,21 +37,13 @@ then
 ##****************CREATE TABLE****************************        
         elif [[ ${inputLine[0]} =~ ^create$ && ${inputLine[1]} =~ ^table$ ]]
         then
-            #table name has to be the 3rd argument
             tbl_name=${inputLine[2]}
-            #get the length of the input
             let length=${#inputLine[*]}
-            #get the last string/word written
             let last_element=length-1
 
-            #after table name the string has to start with "("
-            #and the command has to end with ");"
             if [[ ${inputLine[3]} =~ ^[\(] && ${inputLine[last_element]} =~ ");"$ ]]
             then
-                #start looping from the 4th arg => column names
                 let count=3
-                #parameters string which will hold the
-                #column nam, datatypes and size
                 parameters=""
 
                 while [ $count -lt $length ] 
@@ -73,10 +59,6 @@ then
                     #checks true if the element consists of "," only
                     if [[ $element =~ ^[\,]$ ]]
                     then
-                        #checks if the "," has something written after it
-                        #if not will break from this loop and contines
-                        #in the main while loop of accepting commands from the user
-                        #ex: CREATE TABLE tbl1 (col1 INTEGER 2, col2 STRING 10 , );
                         let check=count+1
                         if ! [[ ${inputLine[$check]} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
                         then
@@ -84,29 +66,18 @@ then
                             continue 2
                         fi
                         parameters+=""
-                    #true if the word ends with a ","
-                    #trims the "," at the end of the word
-                    #ex: col1 INTEGER 2, 
                     elif [[ $element =~ [\,]$ ]]
                     then
                         parameters+=${element%?}
                         parameters+="+"
-                    #true if the word starts with a ","
-                    #trims the "," at the beignning
-                    #ex: ,col2 STRING 10
                     elif [[ $element =~ ^[\,] ]]
                     then
                         parameters+=${element: 1}
                         parameters+="+"
-                    #true if the word starts with "("
-                    #trims the "("
-                    #ex: (col1 
                     elif [[ $element =~ ^[\(] ]]
                     then
                         parameters+=${element: 1}
                         parameters+="+"
-                    #true if the word ends with ");"
-                    #trims the ");"
                     elif [[ $element =~ [\)\;]$ ]]
                     then
                         element=${element%?}
@@ -117,9 +88,7 @@ then
                     fi
                     ((count++))
                 done
-                #if the string of parameters starts with "+"
-                #or ends with "+" will trim both
-                #parameters in the end holds: col1+integer+2+col2+string+10
+                #echo $parameters
                 if [[ ${parameters: 0:1} == "+" ]]
                 then
                     parameters=${parameters: 1}

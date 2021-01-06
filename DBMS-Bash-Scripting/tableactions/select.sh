@@ -13,7 +13,7 @@ do
 					read -p "InValid Input ... 😱 `echo $'\n> 'Press any key to Refresh ... `" ; exit 	
 				fi
 			if [[ -f $location ]]; then
-				select choice in "Select Row" "Select Column" "Select Cell" "All" "Cancel"; do
+				select choice in "Select Row" "Select Column" "Select Cell" "Select Multi-Cell" "All" "Cancel"; do
 					case $choice in
 						"Select Row" )	
 							read -p "Enter Primary Key Value (Name: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f1) ,Type: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f2) ,Size: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f3)) : " pk_val
@@ -87,12 +87,46 @@ do
 									echo "Not-Accepted Col-Name($REPLY) ... 😱 "
 								else
 									let fieldnum=$(echo "$fields" | grep -x -n "$REPLY" | cut -d':' -f1)
-									echo "Cell of Row-PK($pk_val) and Col-Field($REPLY) is | $(sed -n "${linenum}p" "$location"  | cut -d',' -f "$fieldnum") |"
+								echo " -> Cell of Row-PK($pk_val) and Col-Field($REPLY) is |  $(sed -n "${linenum}p" "$location"  | cut -d',' -f "$fieldnum")  |  ✔️  "
 									
 								fi
 							fi
 							read -p "> Press any key to Refresh ... " ; exit	
 							;;
+						"Select Multi-Cell"  ) read -p "Enter Primary Key Value (Name: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f1) ,Type: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f2) ,Size: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f3)) : " pk_val
+							linenum=''
+							linenum=$(cut -d ',' -f1 "$location" | awk '{if(NR != 1) print $0}' | grep -x -n -e "$pk_val" | cut -d':' -f1)
+							
+							if [[ "$pk_val" == '' ]]; then
+								echo "InValid-NULL-Entry ... 😱 "
+							elif [[ "$linenum" = '' ]]; then
+								echo "Not-Accepted PK-($pk_val) ... 😱 "
+							else
+								let linenum=$linenum+1
+								echo "Selected Row-PK($pk_val) Successfully ... ✔️ "
+								echo " > Select Any of Column-Names : "
+								fields=$(head -1 $location | awk 'BEGIN{ RS = ","; FS = "+" } {print $1}')
+								fieldsNums=$(echo $fields |wc -w)
+								echo "| $(echo "$fields" | awk 'BEGIN{ORS=" | "} {print $0}')"
+							echo "---------------------------------------------------------------------------------------------------------------"
+								read -p "Enter Col-Names (Space separated) : " -ra colNames
+								#read -p "->  "
+								if [[ "${colNames[*]}" = '' ]]; then
+									echo "InValid-NULL-Entry ... 😱 "
+								fi
+								for ((i=0; i<${#colNames[@]}; i++)); do
+									#echo ${colNames[$i]}
+									if [[ $(echo "$fields" | grep -x "${colNames[$i]}") = "" ]]; then
+										echo "Not-Accepted Col-Name( ${colNames[$i]} ) ... 😱 " && read -p "> Press any key to Refresh ... " ; exit 
+									fi
+								done
+								for ((i=0; i<${#colNames[@]}; i++)); do
+									let fieldnum=$(echo "$fields" | grep -x -n "${colNames[$i]}" | cut -d':' -f1)
+						echo " -> Cell of Row-PK($pk_val) and Col-Field( ${colNames[$i]} ) is   |    $(sed -n "${linenum}p" "$location"  | cut -d',' -f "$fieldnum")    |  ✔️ "
+								done  
+								
+							fi
+							read -p "> Press any key to Refresh ... " ; exit ;;
 						"All" ) let length=$( sed '1d' "$location" | wc -l | cut -f 1 )
 							#let fields=$(head -1 "$location" | sed -e 's/,/ /g' | wc -w)
 							let count=0
