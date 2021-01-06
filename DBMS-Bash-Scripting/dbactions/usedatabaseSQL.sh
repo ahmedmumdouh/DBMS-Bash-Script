@@ -40,6 +40,7 @@ then
             break
         #the condition is truue if the input starts with
         #create table
+##****************CREATE TABLE****************************        
         elif [[ ${inputLine[0]} =~ ^create$ && ${inputLine[1]} =~ ^table$ ]]
         then
             #table name has to be the 3rd argument
@@ -62,6 +63,13 @@ then
                 while [ $count -lt $length ] 
                 do
                     element=${inputLine[$count]}
+
+                    if [[ $element =~ [\+] ]]
+                    then
+                        echo "Invalid Syntax, cannot enter '+' or ',' as parameters "
+                        continue 2
+                    fi
+
                     #checks true if the element consists of "," only
                     if [[ $element =~ ^[\,]$ ]]
                     then
@@ -120,7 +128,7 @@ then
                 then
                     parameters=${parameters%?}
                 fi
-
+                
                 #pass the table name, the parameters string and the database name
                 #to the create tables file
                 bash ./tableactions/createtableSQL.sh $tbl_name $parameters $1
@@ -129,6 +137,7 @@ then
                 echo "invalid command"
                 echo ""
             fi
+#****************DROP TABLE****************************            
         #true if the string starts with drop table
         elif [[ ${inputLine[0]} =~ ^drop$ && ${inputLine[1]} =~ ^table$ ]]
         then
@@ -143,6 +152,7 @@ then
             else
                 echo "invalid command"
             fi
+##****************SHOW TABLES****************************            
         elif [[ ${inputLine[0]} =~ ^show$ ]]
         then
             if [[ ${inputLine[1]} =~ ^tables$ && ${inputLine[2]} = ";" ]]
@@ -154,6 +164,7 @@ then
             else
                 echo "invalid command"
             fi
+##****************DESC TABLE****************************            
         elif [[ ${inputLine[0]} =~ ^desc$ ]]
         then
             if [[ ${inputLine[2]} =~ ";" ]]
@@ -168,6 +179,7 @@ then
                 echo "invalid command"
                 echo ""
             fi 
+##****************SELECT STATEMENT WITH WHERE****************************            
         elif [[ ${inputLine[0]} =~ ^select$ ]]
         then
             let length=${#inputLine[*]}
@@ -197,6 +209,7 @@ then
                 else
                     echo "invalid command"
                 fi
+##****************SELECT STATEMENT****************************                
             elif [[ ${inputLine[$length-2]} =~ ^from$ ]]
             then
                 tbl_name=${inputLine[$length-1]}
@@ -211,6 +224,12 @@ then
                     while [ $col_count -lt $loop ]
                     do
                         element=${inputLine[$col_count]}
+
+                        if [[ $element =~ [\+] ]]
+                        then
+                            echo "Invalid Syntax, cannot enter '+' or ',' as parameters"
+                            continue 2
+                        fi                   
 
                         if [[ $element =~ ^[\,]$ ]]
                         then
@@ -262,6 +281,7 @@ then
             else
                 echo "invalid command"
             fi
+##****************DELETE FROM TABLE****************************
         elif [[ ${inputLine[0]} =~ ^delete$ && ${inputLine[1]} =~ ^from$ && ${inputLine[3]} =~ ^where$ ]]
         then
             let length=${#inputLine[*]}
@@ -279,6 +299,135 @@ then
                 bash ./tableactions/deleteSQL.sh $1 $tbl_name $col_name $col_value
             else
                 echo "Invalid command"
+            fi
+##****************INSERT INTO TABLE****************************
+        elif [[ ${inputLine[0]} =~ ^insert$ && ${inputLine[1]} =~ ^into$ && ${inputLine[3]} =~ ^values$ ]]
+        then
+            tbl_name=${inputLine[2]}
+            #get the length of the input
+            let length=${#inputLine[*]}
+            #get the last string/word written
+            let last_element=length-1
+
+            #after table name the string has to start with "("
+            #and the command has to end with ");"
+            if [[ ${inputLine[4]} =~ ^[\(] && ${inputLine[last_element]} =~ ");"$ ]]
+            then
+                #start looping from the 5th arg => column names
+                let count=4
+                #parameters string which will hold the
+                #data to be inserted in the table
+                parameters=""
+
+                beignning=${inputLine[4]}
+                ending=${inputLine[$last_element]}
+
+                beignning=${beignning: 1}
+
+                ending=${ending%?}
+                ending=${ending%?}
+                
+                inputLine[4]=$beignning
+                inputLine[$last_element]=$ending
+
+                while [ $count -lt $length ] 
+                do
+                    element=${inputLine[$count]} 
+                    echo $element
+                    if [[ $element =~ [\+] ]]
+                    then
+                        echo "Invalid Syntax, cannot enter '+' as parameters"
+                        continue 2
+                    fi                   
+
+                    #checks true if the element consists of "," only
+                    if [[ $element =~ ^[\,]$ ]]
+                    then
+                        #checks if the "," has something written after it
+                        #if not will break from this loop and continues
+                        #in the main while loop of accepting commands from the user
+                        #ex: INSERT INTO tbl_name VALUES (val1, val2 , );
+                        let check=count+1
+                        echo $element
+                        echo ${inputLine[$check]}
+                        if ! [[ ${inputLine[$check]} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
+                        then
+                            echo "Invalid command"
+                            continue 2
+                        fi
+                        parameters+=""
+                    #true if the word ends with a ","
+                    #trims the "," at the end of the word
+                    #ex: col1 INTEGER 2, 
+                    elif [[ $element =~ [\,]$ ]]
+                    then
+                        parameters+=${element%?}
+                        parameters+="+"
+                    #true if the word starts with a ","
+                    #trims the "," at the beignning
+                    #ex: ,col2 STRING 10
+                    elif [[ $element =~ ^[\,] ]]
+                    then
+                        parameters+=${element: 1}
+                        parameters+="+"   
+                    #true if the word starts with "("
+                    #trims the "("
+                    #ex: (col1 
+                    elif [[ $element =~ ^[\(] ]]
+                    then
+                        parameters+=${element: 1}
+                        parameters+="+"
+                    #true if the word ends with ");"
+                    #trims the ");"
+                    elif [[ $element =~ [\)\;]$ ]]
+                    then
+                        element=${element%?}
+                        parameters+=${element%?}                 
+                    else
+                        parameters+=$element
+                        parameters+="+"
+                    fi
+                    ((count++))
+                done
+                #if the string of parameters starts with "+"
+                #or ends with "+" will trim both
+                #parameters in the end holds: col1+integer+2+col2+string+10
+                if [[ ${parameters: 0:1} == "+" ]]
+                then
+                    parameters=${parameters: 1}
+                fi
+                if [[ ${parameters: -1} == "+" ]]
+                then
+                    parameters=${parameters%?}
+                fi
+
+                bash ./tableactions/insertSQL.sh $1 $tbl_name $parameters
+            else
+                echo "Invalid command"
+            fi
+##****************UPDATE TABLE****************************            
+        elif [[ ${inputLine[0]} =~ ^update$ && ${inputLine[2]} =~ ^set$ && ${inputLine[6]} =~ ^where$ ]]
+        then
+            tbl_name=${inputLine[1]}
+            col_name=${inputLine[3]}
+            operator1=${inputLine[4]}
+            col_value=${inputLine[5]}
+            col_cond_name=${inputLine[7]}
+            operator2=${inputLine[8]}
+            col_cond_value=${inputLine[9]}
+            echo "$col_name, $col_value, $col_cond_name $col_cond_value"
+            if [[ $operator1 != "=" || $operator2 != "=" ]]
+            then
+                echo "Invalid command, Check synatx"
+            elif [[ $tbl_name =~ [\+] || $col_name =~ [\+] || $col_value =~ [\+] || $col_cond_name =~ [\+] || $col_cond_value =~ [\+] ]]
+            then
+                echo "Invalid Syntax, cannot enter '+' as parameters"
+            elif [[ $col_cond_value =~ [\;]$ ]]
+            then
+                col_cond_value=${col_cond_value%?}
+                bash ./tableactions/updatetableSQL.sh $1 $tbl_name $col_name $col_value $col_cond_name $col_cond_value
+            else
+                echo "Invalid command, Check synatx"
             fi
         else
             echo "invalid command"
