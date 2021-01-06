@@ -25,10 +25,10 @@ elif [[ -d ./DB/$1 ]]
 then
     while [ true ]
     do
-        echo "Using database $1"
-        echo "To go back to databases press [B/b]"
-        echo ""
-        read -p ">($1) " -ra inputLine
+        # echo "Using database $1"
+        # echo "To go back to databases press [B/b]"
+        # echo ""
+        read -p "($1) > " -ra inputLine
         if [[ ${inputLine[0]} =~ ^[Bb]$ ]]
         then
             break
@@ -399,7 +399,7 @@ then
                 echo "Invalid command, Check synatx"
             fi
         else
-            echo "invalid command"
+            echo "Invalid command"
         fi
     done
 else

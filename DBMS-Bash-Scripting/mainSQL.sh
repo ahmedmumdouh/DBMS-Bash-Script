@@ -45,13 +45,11 @@ do
         #if the query is correct will call the createdb file
         if [ $result = 1 ]
         then
-            echo "go to create file"
             bash dbactions/createdbSQL.sh $dbName
         elif [ $result = 0 ]
         then
-            read -p "InValid Input ... `echo $'\n> 'Press any key to Refresh ... `"
+            echo "Invalid command"
         else
-            echo "go to create file"
             bash dbactions/createdbSQL.sh $result
         fi
 
@@ -64,13 +62,11 @@ do
 
         if [ $result = 1 ]
         then
-            echo "go to drop file"
             bash dbactions/dropdbSQL.sh $dbName
         elif [ $result = 0 ]
         then
-            echo "Invalid input"
+            echo "Invalid command"
         else
-            echo "go to drop file"
             bash dbactions/dropdbSQL.sh $result
         fi
 
@@ -83,13 +79,11 @@ do
 
         if [ $result = 1 ]
         then
-            echo "go to use file"
             bash dbactions/usedatabaseSQL.sh $dbName
         elif [ $result = 0 ]
         then
-            echo "Invalid input"
+            echo "Invalid command"
         else
-            echo "go to use file"
             bash dbactions/usedatabaseSQL.sh $result
         fi
 
@@ -100,15 +94,13 @@ do
         #true if the 2nd arg is databases and 3rd arg is ";"
         if [[ ${inputLine[1]} =~ ^databases$ && ${inputLine[2]} =~ ";" ]]
         then
-            echo "show"
             bash dbactions/listdatabasesSQL.sh
         #true if 2nd arg is databases;
         elif [[ ${inputLine[1]: -1} == ";" && ${inputLine[1]%?} =~ ^databases$ ]]
         then
-            echo "show"
             bash dbactions/listdatabasesSQL.sh
         else
-            echo "invalid"
+            echo "Invalid command"
         fi
     #if the user inputs q or Q will break from the loop
     #and exit the program
@@ -117,7 +109,7 @@ do
         break
 
     else
-        echo "invalid input"
+        echo "Invalid command"
     fi
 done
 
