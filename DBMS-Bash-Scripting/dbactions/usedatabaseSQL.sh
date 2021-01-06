@@ -70,10 +70,6 @@ then
                     then
                         parameters+=${element%?}
                         parameters+="+"
-                    elif [[ $element =~ ^[\,] ]]
-                    then
-                        parameters+=${element: 1}
-                        parameters+="+"
                     elif [[ $element =~ ^[\(] ]]
                     then
                         parameters+=${element: 1}
@@ -217,10 +213,6 @@ then
                                 continue 2
                             fi
                             col_names+=""
-                        elif [[ $element =~ ^[\,] ]]
-                        then
-                            col_names+=${element: 1}
-                            col_names+="+"
                         elif [[ $element =~ [\,]$ ]]
                         then
                             let check=col_count+1
@@ -288,21 +280,10 @@ then
                 #data to be inserted in the table
                 parameters=""
 
-                beignning=${inputLine[4]}
-                ending=${inputLine[$last_element]}
-
-                beignning=${beignning: 1}
-
-                ending=${ending%?}
-                ending=${ending%?}
-                
-                inputLine[4]=$beignning
-                inputLine[$last_element]=$ending
-
                 while [ $count -lt $length ] 
                 do
                     element=${inputLine[$count]} 
-                    echo $element
+
                     if [[ $element =~ [\+] ]]
                     then
                         echo "Invalid Syntax, cannot enter '+' as parameters"
@@ -317,44 +298,43 @@ then
                         #in the main while loop of accepting commands from the user
                         #ex: INSERT INTO tbl_name VALUES (val1, val2 , );
                         let check=count+1
-                        echo $element
-                        echo ${inputLine[$check]}
+
                         if ! [[ ${inputLine[$check]} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
                         then
                             echo "Invalid command"
                             continue 2
                         fi
                         parameters+=""
-                    #true if the word ends with a ","
-                    #trims the "," at the end of the word
-                    #ex: col1 INTEGER 2, 
-                    elif [[ $element =~ [\,]$ ]]
-                    then
-                        parameters+=${element%?}
-                        parameters+="+"
-                    #true if the word starts with a ","
-                    #trims the "," at the beignning
-                    #ex: ,col2 STRING 10
-                    elif [[ $element =~ ^[\,] ]]
-                    then
-                        parameters+=${element: 1}
-                        parameters+="+"   
+                    fi
                     #true if the word starts with "("
                     #trims the "("
                     #ex: (col1 
-                    elif [[ $element =~ ^[\(] ]]
+                    if [[ $element =~ ^[\(] ]]
                     then
-                        parameters+=${element: 1}
-                        parameters+="+"
+                        element=${element: 1}
+                    fi
+                    #true if the word ends with a ","
+                    #trims the "," at the end of the word
+                    #ex: col1 INTEGER 2, 
+                    if [[ $element =~ [\,]$ ]]
+                    then
+                        element=${element%?}
+                    fi                    
                     #true if the word ends with ");"
                     #trims the ");"
-                    elif [[ $element =~ [\)\;]$ ]]
+                    if [[ $element =~ [\)\;]$ ]]
                     then
                         element=${element%?}
                         parameters+=${element%?}                 
                     else
-                        parameters+=$element
-                        parameters+="+"
+                        if ! [[ $element == "" || $element == " " ]]
+                        then
+                            parameters+=$element
+                            parameters+="+"
+                        else
+                            echo "Invalid command"
+                            continue 2
+                        fi
                     fi
                     ((count++))
                 done
