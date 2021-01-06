@@ -37,16 +37,32 @@ function match_size {
 	fi
 }
 #################################################################### Code ###############
+
+
+#x=`awk -F: '{if(NR==1){print $1}}' data/shreef/lollll;`
+# awk -F: -v"i=$i" '{if(NR==1){print $i}}' data/shreef/lollll  && $value = +(0-9)
+
+# insert into table
+######################################################
+		
+		
+
+#######################################
+
+select varuse in "Insert into Table" "Cancel" 
+do
+	case $varuse in
+		"Insert into Table" )	
 read -p "Enter TB(Insert) Name: " insertb && if ! [[ $insertb =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] ;
 	then
-		read -p "InValid Input ... `echo $'\n> 'Press any key to Refresh ... `" ; exit 	
+		read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" ; exit 	
 	fi
 
 if [[ -f DB/$1/$insertb ]]; then
 	location=DB/$1/$insertb ;
 	
 
-	select sel in "Insert New Record Values" "Insert New Column(s)"
+	select sel in "Insert New Record Values" "Insert New Column(s)" "Cancel"
 	do
 		case $sel in
 			"Insert New Record Values" )
@@ -59,23 +75,23 @@ if [[ -f DB/$1/$insertb ]]; then
 				sflag=$(match_size "$pk_val" "$location" 1)
 				pk_uflag=$(cut -d ',' -f1 "$location" | awk '{if(NR != 1) print $0}' | grep -x -e "$pk_val")
 				if [[ -z "$pk_val" ]]; then
-					echo "InValid-NULL-Entry ... "					
+					echo "InValid-NULL-Entry ... 😱"					
 				elif [[ "$dflag" == 1 ]]; then 
-					echo "InValid-Type-Entry ... "
+					echo "InValid-Type-Entry ... 😱"
 				elif [[ "$sflag" == 1 ]]; then
-					echo "InValid-Size-Entry ... "
+					echo "InValid-Size-Entry ... 😱"
 				elif [[ -n "$pk_uflag" ]]; then
-					echo "This PK-($pk_val) is Already Existed ... "
+					echo "This PK-($pk_val) is Already Existed ... 😱"
 				else # primary key is valid
 					if [[ i -eq $nf ]]; then
 						echo "$pk_val" >> "$location"
-						echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... "
-						read -p "Data-Insertion is Successfully ... `echo $'\n> 'Press any key to Refresh ... `"
+						echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... ✔️ "
+						read -p "Data-Insertion is Successfully ... 😀`echo $'\n> 'Press any key to Refresh ... `"
 						 
 					else 
 						echo -n "$pk_val" >> "$location"
 						echo -n ',' >> "$location"
-						echo "This PK-($pk_val) is Inserted Successfully ... "
+						echo "This PK-($pk_val) is Inserted Successfully ... ✔️ "
 					fi
 					break 
 				fi
@@ -86,19 +102,19 @@ if [[ -f DB/$1/$insertb ]]; then
 					dflag=$(match_data "$pk_val" "$location" "$i")
 					sflag=$(match_size "$pk_val" "$location" "$i")
 					if [[ "$dflag" == 1 ]]; then 
-						echo "InValid-Type-Entry ... "
+						echo "InValid-Type-Entry ... 😱"
 					elif [[ "$sflag" == 1 ]]; then
-						echo "InValid-Size-Entry ... "
+						echo "InValid-Size-Entry ... 😱"
 					else # Data is valid
 						if [[ i -eq $nf ]]; then
 							echo "$pk_val" >> "$location"
-							echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... "
-							read -p "Data-Insertion is Successfully ... `echo $'\n> 'Press any key to Refresh ... `" 
+							echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... ✔️ "
+							read -p "Data-Insertion is Successfully ... 😀 `echo $'\n> 'Press any key to Refresh ... `" 
 							 
 						else 
 							echo -n "$pk_val" >> "$location"
 							echo -n ',' >> "$location"
-							echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... "
+							echo "This Col($[i])-Val-($pk_val) is Inserted Successfully ... ✔️ "
 						fi
 						break 
 					fi
@@ -115,7 +131,7 @@ if [[ -f DB/$1/$insertb ]]; then
 					if [[ "$num_col" = +([1-9])*([0-9]) ]]; then
 						break
 					else
-						read -p  "InValid Input Try Again ... `echo $'\n> 'Press any key to Refresh ... `" ; exit
+						read -p  "InValid Input Try Again ... 😱`echo $'\n> 'Press any key to Refresh ... `" ; exit
 					fi
 				done
 		
@@ -130,11 +146,11 @@ if [[ -f DB/$1/$insertb ]]; then
 				#
 				read -p "Enter Column-($[fieldnum]) Name :  " col_name
 				if ! [[ $col_name =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-					echo "InValid-Entry ... "
+					echo "InValid-Entry ... 😱"
 				elif [[ -n "`echo "$fields" | grep -x "$col_name"`" ]]; then
-					echo "Already Existed Col-Name($col_name) ... "
+					echo "Already Existed Col-Name($col_name) ... 😱"
 				else
-					col_field="$col_name+" ; echo "Accepted" && break 
+					col_field="$col_name+" ; echo "Accepted ✔️" && break 
 						
 				fi	
 				#
@@ -146,9 +162,9 @@ if [[ -f DB/$1/$insertb ]]; then
 				echo "Enter Column-($[fieldnum]) DataType : "
 				select dtype in "integer" "string"; do
 					if [[ "$REPLY" = "1" || "$REPLY" = "2" ]]; then
-						col_field="$col_field$dtype+" ; echo "Accepted" && break 
+						col_field="$col_field$dtype+" ; echo "Accepted ✔️" && break 
 					else
-						echo InValid Input Try Again ... 
+						echo InValid Input Try Again ... 😱
 					fi
 				done
 				break
@@ -160,21 +176,22 @@ if [[ -f DB/$1/$insertb ]]; then
 				if [[ "$size" = +([1-9])*([0-9]) ]]; then
 					col_field="$col_field$size" ; 
 					if [[ i -eq $num_col ]]; then
-						awk -v fn="$fieldnum" -v fname="$col_field" 'BEGIN{FS=OFS=","}{if( NR == 1 ){ $fn=fname}else{ $fn=""} }1' "$location" >"$location".new && rm "$location" && mv "$location".new "$location" && echo "Column-($fieldnum) Name-($col_name) is Inserted Successfully ... " 
-						read -p "TB ($insertb) modified successfully ... `echo $'\n> 'Press any key to Refresh ... `" && exit
+						awk -v fn="$fieldnum" -v fname="$col_field" 'BEGIN{FS=OFS=","}{if( NR == 1 ){ $fn=fname}else{ $fn=""} }1' "$location" >"$location".new && rm "$location" && mv "$location".new "$location" && echo "Column-($fieldnum) Name-($col_name) is Inserted Successfully ... ✔️" 
+						read -p "TB ($insertb) modified successfully ... 😀 `echo $'\n> 'Press any key to Refresh ... `" && exit
 					
 					else 
-						awk -v fn="$fieldnum" -v fname="$col_field" 'BEGIN{FS=OFS=","}{if( NR == 1 ){ $fn=fname}else{ $fn=""} }1' "$location" >"$location".new && rm "$location" && mv "$location".new "$location" && echo "Column-($fieldnum) Name-($col_name) is Inserted Successfully ... " 
+						awk -v fn="$fieldnum" -v fname="$col_field" 'BEGIN{FS=OFS=","}{if( NR == 1 ){ $fn=fname}else{ $fn=""} }1' "$location" >"$location".new && rm "$location" && mv "$location".new "$location" && echo "Column-($fieldnum) Name-($col_name) is Inserted Successfully ... ✔️" 
 					fi
 					break
 				
 				else
-					echo InValid Input Try Again ... 
+					echo InValid Input Try Again ... 😱 
 				fi
 			done
 		done
 				;;
-			* ) read -p "InValid Input ... `echo $'\n> 'Press any key to Refresh ... `" ; exit 
+			"Cancel"  )  read -p "Canceled ... 😉 `echo $'\n> 'Press any key to Refresh ... `" ; exit ;;
+			* ) read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" ; exit 
 				;;
 		esac
 
@@ -182,19 +199,18 @@ if [[ -f DB/$1/$insertb ]]; then
 	#
 	
 else
-	read -p  "Not-Existed TB : $insertb `echo $'\n> 'Press any key to Refresh ... `" ; exit
+	read -p  "Not-Existed TB : $insertb 😱`echo $'\n> 'Press any key to Refresh ... `" ; exit
 fi
-
-#x=`awk -F: '{if(NR==1){print $1}}' data/shreef/lollll;`
-# awk -F: -v"i=$i" '{if(NR==1){print $i}}' data/shreef/lollll  && $value = +(0-9)
-
-# insert into table
-######################################################
+			;;
+		"Cancel" )	
+			read -p "Canceled ... 😉 `echo $'\n> 'Press any key to Refresh ... `"
+			;;
 		
-		
-
-#######################################
-
+		* ) read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" 
+			;;
+	esac
+	clear && break 
+done
 
 
 
