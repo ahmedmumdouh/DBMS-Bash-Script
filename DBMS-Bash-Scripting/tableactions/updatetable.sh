@@ -51,7 +51,7 @@ do
 				fi
 
 			if [[ -f "$location" ]]; then
-				select cho in "Update Cell" "Update Row Values" "Cancel"; do
+				select cho in "Update Cell" "Update Row Values" "Update Column Values" "Cancel"; do
 					case $cho in
 						"Update Cell" ) 
 							read -p "Enter Primary Key Value (Name: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f1) ,Type: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f2) ,Size: $(head -1 "$location" | cut -d',' -f1 |cut -d'+' -f3)) : " pk_val
@@ -103,7 +103,7 @@ do
 									fi						
 								fi
 							fi
-							read -p "> Press any key to Refresh ... " ; exit	
+							read -p " -> Press any key to Refresh ... " ; exit	
 							;;
 
 						"Update Row Values" ) 
@@ -148,6 +148,48 @@ do
 								read -p "> Press any key to Refresh ... " ; exit
 							fi
 							;;
+						"Update Column Values" ) fields=$(head -1 $location | awk 'BEGIN{ RS = ","; FS = "+" } {print $1}' | sed '1d')
+								if [[ "$fields" == '' ]]; then
+									echo " There is no Column(s) except PK-Col ... 😱 "
+									read -p "> Press any key to Refresh ... " ; exit
+								fi
+								echo " -> Select one of Column-Name : "
+								echo "| $(echo "$fields" | awk 'BEGIN{ORS=" | "} {print $0}')"
+							echo "---------------------------------------------------------------------------------------------------------------"
+								read -p " ->  "
+								if [[ "$REPLY" = '' ]]; then
+									echo "InValid-NULL-Entry ... "
+								elif [[ $(echo "$fields" | grep -x "$REPLY") = "" ]]; then
+									echo "Not-Accepted Col-Name($REPLY) ... 😱 "
+								else
+									let fieldnum=$(echo "$fields" | grep -x -n "$REPLY" | cut -d':' -f1)
+									let fieldnum=$fieldnum+1
+									echo "Update old-Values of Col-Field($REPLY) : "
+									read -p " -> Enter New Value (Name: $(head -1 "$location" | cut -d',' -f"$fieldnum" |cut -d'+' -f1) ,Type: $(head -1 "$location" | cut -d',' -f"$fieldnum" |cut -d'+' -f2) ,Size: $(head -1 "$location" | cut -d',' -f"$fieldnum" |cut -d'+' -f3) ) : " new_val
+									
+									dflag=$(match_data "$new_val" "$location" "$fieldnum")
+									sflag=$(match_size "$new_val" "$location" "$fieldnum")
+									pk_uflag=$(cut -d ',' -f1 "$location" | awk '{if(NR != 1) print $0}' | grep -x -e "$new_val")
+									if [[ "$dflag" == 1 ]]; then 
+										echo "InValid-Type-Entry ... 😱 "
+									elif [[ "$sflag" == 1 ]]; then
+										echo "InValid-Size-Entry ... 😱 "
+									else # Data is valid						
+										read -p "Are you Sure You Want To Update All old-Values of Col-Field($REPLY) ? [y/n]  " ch
+										case $ch in
+											 [Yy]* ) 											
+	awk -v fn="$fieldnum" -v nv="$new_val" 'BEGIN { FS = OFS = "," } { if(NR != 1 ) $fn = nv } 1' "$location" > "$location".new && rm "$location" && mv "$location".new "$location" && echo "Entry D-($new_val) Updated Successfully ... 😀 "									;;
+											 [Nn]* ) 
+												echo "Canceled ... 😉"
+												;;
+											* ) 
+												echo "Invalid Input ... 😱"
+												;;
+										esac
+									fi						
+								fi
+							read -p "> Press any key to Refresh ... " ; exit 
+							;;
 						"Cancel" ) read -p "Canceled ... 😉 `echo $'\n> 'Press any key to Refresh ... `" ; exit ;;
 						* ) read -p "InValid Input ... 😱 `echo $'\n> 'Press any key to Refresh ... `" ; exit 
 							;;
@@ -156,14 +198,15 @@ do
 				done
 
 			else
-				read -p "Not Existed TB : $uptb ... 😱 `echo $'\n> '`Press any key to Refresh ... "
+				read -p "Not Existed TB : $uptb ... 😱 `echo $'\n -> '`Press any key to Refresh ... "
 			fi
 			;;
+		
 		"Cancel" )	
-			read -p "Canceled ... 😉 `echo $'\n> 'Press any key to Refresh ... `"
+			read -p "Canceled ... 😉 `echo $'\n -> 'Press any key to Refresh ... `"
 			;;
 		
-		* ) read -p "InValid Input ... 😱`echo $'\n> 'Press any key to Refresh ... `" 
+		* ) read -p "InValid Input ... 😱`echo $'\n -> 'Press any key to Refresh ... `" 
 			;;
 	esac
 	clear && break 
