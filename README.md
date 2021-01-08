@@ -22,7 +22,7 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
         - with Column (Name + DataType ( int ot string ) + Size) and PK in the 1st Column (Default)
 - Drop Table
 - Updata Table
-        - Cell with PK selection
+        * Cell with PK selection
         - Multi-Row-Values with PK selection
         - Multi-Col-Values without PK selection
 - Insert into Table
@@ -52,7 +52,7 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
 - The Meta-data in the same file table .
 - There is assumption that First Column is Primary Key, which used for Delete Rows.
 - The Select of Rows displayed in screen/terminal in Accepted/Good Format
-- Any Naming Rule (DataBase or Table or Column) must be like [ begin with Char or _ and then Char or Int or _  ]
+- Any Naming Rule (DataBase or Table or Column) must be like [ begin with Char or _ and then Char or _ or Int   ]
 - Keeping track of Data Types (Digits or Strings) and Size of Each Column and Validated user input based on it on every Stage of menu 
 - String DataType accept any value except ,  
 
