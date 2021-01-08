@@ -128,6 +128,7 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
 - There is assumption that First Column is Primary Key, which used for Delete Rows.
 - The Select of Rows displayed in screen/terminal in Accepted/Good Format
 - Any Naming Rule (DataBase or Table or Column) must be like [ begin with Char or _ and then Char or _ or Int   ]
+- every Primary Key is NOT NULL and UNIQUE
 - Keeping track of Data Types (Digits or Strings) and Size of Each Column and Validated user input based on it on every Stage of menu 
 - String DataType accept any value except ,  
 
