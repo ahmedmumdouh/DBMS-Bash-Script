@@ -18,11 +18,10 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
 
 ### Up on user Connect to Specific Database, there will be new Screen with this Menu: 
 - List Tables
-- Create Table 
-        - with Column (Name + DataType ( int ot string ) + Size) and PK in the 1st Column (Default)
-- Drop Table
-- Updata Table
-        * Cell with PK selection
+- Create Table  
+- Drop Table 
+- Updata Table 
+        - Cell with PK selection
         - Multi-Row-Values with PK selection
         - Multi-Col-Values without PK selection
 - Insert into Table
