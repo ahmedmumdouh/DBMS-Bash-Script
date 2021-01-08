@@ -4,9 +4,9 @@
 
 The Project aim to develop DBMS, that will enable users to store and retrieve the data from Hard-disk.
 
-The Project Features:
-The Application will be CLI Menu based app, that will provide to user this Menu items:
-Main Menu:
+#The Project Features:
+##The Application will be CLI Menu based app, that will provide to user this Menu items:
+##Main Menu:
 - List Databases
 - Connect To Databases
 - Create Database
@@ -16,32 +16,32 @@ Main Menu:
 - Use SQL Mode
 - Exit 
 
-Up on user Connect to Specific Database, there will be new Screen with this Menu:
+##Up on user Connect to Specific Database, there will be new Screen with this Menu:
 - List Tables
 - Create Table 
-        -> with Column (Name + DataType ( int ot string ) + Size) and PK in the 1st Column (Default)
+        - with Column (Name + DataType ( int ot string ) + Size) and PK in the 1st Column (Default)
 - Drop Table
 - Updata Table
-        -> Cell with PK selection
-        -> Multi-Row-Values with PK selection
-        -> Multi-Col-Values without PK selection
+        - Cell with PK selection
+        - Multi-Row-Values with PK selection
+        - Multi-Col-Values without PK selection
 - Insert into Table
-        -> Insert New Record Values 
-        -> Alter Add Column(s)
+        - Insert New Record Values 
+        - Alter Add Column(s)
 - Delete From Table  
-        -> Delete Entire Row with PK selection
-        -> Alter Drop Column
-        -> Truncate Table
+        - Delete Entire Row with PK selection
+        - Alter Drop Column
+        - Truncate Table
 - Select From Table
-        -> Select Entire Row with PK selection
-        -> Select Cell with PK selection
-        -> Select Multi-Cell with PK selection
-        -> Select Column without PK selection
-        -> All
+        - Select Entire Row with PK selection
+        - Select Cell with PK selection
+        - Select Multi-Cell with PK selection
+        - Select Column without PK selection
+        - All
 - Display Table (Meta Data)
 - Back to MainMenu 
 
-SQL Mode : 
+##SQL Mode : 
 -
 
 
@@ -58,6 +58,6 @@ Hints:
 
 
 
-Future Plans :
+###Future Plans :
 - Make the App to accept GUI and make UI more fiendly 
 - Enhance and add more features
