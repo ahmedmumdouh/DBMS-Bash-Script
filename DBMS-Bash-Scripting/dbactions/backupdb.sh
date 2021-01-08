@@ -24,10 +24,9 @@ do
 				dateS="`date +"%d-%m-%Y|%H:%M:%S"`" ;
 				for path in `find ./DB/$dbname -type d 2>>error.log` 
 				do
-					dirname=`echo $path |rev|cut -d/ -f1 |rev  2>>error.log`
-					tar -cvf ./Backup/$dbname/"${dirname}-${dateS}.tar"  $path 2>>error.log ; 
+					dirname=`echo $path | rev 2>>error.log | cut -d/ -f1 2>>error.log | rev  2>>error.log` && tar -cvf ./Backup/$dbname/"${dirname}-${dateS}.tar"  $path 2>>error.log && read -p  "The DB : $dbname BackedUp Successfully ... 😀`echo $'\n> '` Press Any Key to Refresh"; 
 				done
-				read -p  "The DB : $dbname BackedUp Successfully ... 😀`echo $'\n> '` Press Any Key to Refresh";						
+										
 			else
 				read -p "Not Existed DB : $dbname ... 😱`echo $'\n> '`Press any key to Refresh ... " && clear && exit
 			fi	
