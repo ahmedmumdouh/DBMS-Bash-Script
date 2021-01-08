@@ -6,26 +6,34 @@ read -p "Enter TB(Display) Name : " dispt && location=DB/$1/$dispt && if ! [[ $d
 	fi
 
 if [[ -f "$location" ]]; then
-	let length=$( sed '1d' "$location" | wc -l | cut -f 1 )
-	#let fields=$(head -1 "$location" | sed -e 's/,/ /g' | wc -w)
-	let count=0
-	echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-   	echo -n "+ " && head -1 "$location" | awk 'BEGIN{ RS = ","; FS = "+" } {print $1 }' | awk 'BEGIN{ORS="\t|"} {print $0 }'
-   	echo $'\n'"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-	echo "+"
+	    db_name=$1
+	    tbl_name=$dispt
+	    let rlength=$( sed '1d' "$location" | wc -l | cut -f 1 )
+	    let clength=$( head -1 "$location" | sed -e 's/,/ /g' | wc -w | cut -f 1 )
+	    declare -a fields_list
+	    fields=$(head -1 ./DB/$db_name/$tbl_name | awk 'BEGIN{ RS = ","; FS = "+" } {i=1; while(i<=NF){print $i; i++}}')
+	    readarray fields_list <<<"$fields"
+	    let length=${#fields_list[*]}
+	    let count=0
+	    let col_no=1
+	    echo " - Database : $1		- Table : $tbl_name		- Number of Colunms : $clength		- Number of Records : $rlength "
+	    echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+	    echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"   
 	    while [ $count -lt $length ]
 	    do
-		echo -n "+ "
-		sed -n "$((count+2))p" "$location" | awk 'BEGIN{ RS = "," } {print $1 }' | awk 'BEGIN{ORS="\t|"} {print $0 }' #sed -e 's/,/\t|/g' 
-		if (( count == length-1 ))
+		if [ $count == 0 ]
 		then
-		    echo $'\n'"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+		    echo -n "++ 	Column ($col_no) Name : ${fields_list[${count}]}" | tr '\n' ' ' ; echo "  (Primary Key)"  ; 
 		else
-		    echo $'\n'"+----------------------------------------------------------------------------------------------------------------------------------------"
+		    echo -n "++ 	Column ($col_no) Name : ${fields_list[$count]}";
 		fi
-		
-		((count++))
+		echo -n "++ 	Column ($col_no) Datatype : ${fields_list[$count+1]}";
+		echo -n "++ 	Column ($col_no) Size : ${fields_list[$count+2]}";
+		echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" 
+		((count+=3))
+		((col_no++))
 	    done
+	    echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" 
 	echo $'\n'
 	read -p "> Press any key to Refresh ... "
 else

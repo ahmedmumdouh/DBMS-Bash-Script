@@ -17,7 +17,7 @@ do
 					clear
 					echo Tables of Database [ $db ] :$'\n '$(find ./DB/$db/* -type f 2>>error.log | cut -d'/' -f4 2>>error.log )
 					echo ------------------------------------------------------------------------------
-					select varuse in "Create Table" "Drop Table" "Update Table" "Insert into table" "Delete from table" "Select from table" "Display Table" "Back"
+					select varuse in "Create Table" "Drop Table" "Update Table" "Insert into table" "Delete from table" "Select from table" "Display Table (Meta Data)" "Back"
 					do
 						case $varuse in
 							"Create Table" )	
@@ -38,7 +38,7 @@ do
 							"Select from table" )
 								bash tableactions/select.sh $db
 								;;
-							"Display Table" ) 
+							"Display Table (Meta Data)" ) 
 								bash tableactions/disptable.sh $db
 								;;
 							"Back" )  clear && exit

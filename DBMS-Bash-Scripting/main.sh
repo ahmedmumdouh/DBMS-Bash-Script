@@ -4,7 +4,7 @@ do
 	clear
 	echo DataBase List :$'\n '$(find ./DB/ -maxdepth 1 -type d 2>>error.log | cut -d'/' -f3 2>>error.log )
 	echo ------------------------------------------------------------------------------
-	select choice in "Create DataBase" "Rename DataBase" "Drop DataBase"  "Use DataBase" "Use SQLMode" "Exit"
+	select choice in "Create DataBase" "Rename DataBase" "Drop DataBase"  "Use DataBase" "Use SQLMode" "Backup DataBase" "Exit"
 	do
 		case $choice in
 			"Create DataBase" )  bash dbactions/createdb.sh 
@@ -32,6 +32,8 @@ do
 					esac
 					clear && break 
 				done
+				;;
+			"Backup DataBase" )  bash dbactions/backupdb.sh
 				;;
 			"Exit" ) clear && exit
 				;;
