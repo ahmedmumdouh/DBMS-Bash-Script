@@ -18,9 +18,6 @@ if ! [[ $1 =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
 then   
     echo "invalid database name"
 
-#if the directory exists will ask the user
-#if they are sure they want to deletethe db
-#the input has to be either yY or nN
 elif [[ -d ./DB/$1 ]]
 then
     while [ true ]
@@ -32,7 +29,7 @@ then
         if [[ ${inputLine[0]} =~ ^[Bb]$ ]]
         then
             break
-        #the condition is truue if the input starts with
+        #the condition is true if the input starts with
         #create table
 ##****************CREATE TABLE****************************        
         elif [[ ${inputLine[0]} =~ ^create$ && ${inputLine[1]} =~ ^table$ ]]
