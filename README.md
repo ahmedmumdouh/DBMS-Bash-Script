@@ -44,7 +44,7 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
 - SQL Query mode allows the user to access the DBMS using SQL queries.
 - All the SQL queries implemented are case insensitive.
 - It accepts one single query per input, if the user entered multiple queries in the same line or anything else other than a single query the application will output **Invalid command**.
-- The queries has to be written as will be shown below, if there is any variation in spaces will output **Invalid**.
+- The queries has to be written as will be shown below, if there is any variation in spaces the output will be **Invalid**.
 - The first column in a table is always selected as the PRIMARY KEY for that table.
 - To go back from the table mode of operations to the database mode of operation press **b** or **B**.
 - To exit from SQL mode, in the database mode of operations press **q** or **Q**.
