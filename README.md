@@ -21,27 +21,28 @@ The Project aim to develop DBMS, that will enable users to store and retrieve th
 - Create Table  
 - Drop Table 
 - Updata Table 
-        - Cell with PK selection
-        - Multi-Row-Values with PK selection
-        - Multi-Col-Values without PK selection
-- Insert into Table
-        - Insert New Record Values 
-        - Alter Add Column(s)
+  - Cell with PK selection
+  - Multi-Row-Values with PK selection
+  - Multi-Col-Values without PK selection
+- Insert into Table 
+  - Insert New Record Values 
+  - Alter Add Column(s)
 - Delete From Table  
-        - Delete Entire Row with PK selection
-        - Alter Drop Column
-        - Truncate Table
+  - Delete Entire Row with PK selection
+  - Alter Drop Column
+  - Truncate Table
 - Select From Table
-        - Select Entire Row with PK selection
-        - Select Cell with PK selection
-        - Select Multi-Cell with PK selection
-        - Select Column without PK selection
-        - All
+  - Select Entire Row with PK selection
+  - Select Cell with PK selection
+  - Select Multi-Cell with PK selection
+  - Select Column without PK selection
+  - All
 - Display Table (Meta Data)
 - Back to MainMenu 
 
 ### SQL Mode : 
--
+- 
+
 
 
 ####  Hints:
