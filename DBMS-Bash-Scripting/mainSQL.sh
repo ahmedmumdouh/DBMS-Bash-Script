@@ -33,64 +33,98 @@ while [ true ]
 do
     #the sql query is read into the array and the separator is " " space
     read -p "> " -ra inputLine
+
+    let inputLength=${#inputLine[*]}
     
+##********************CREATE DATABASE*****************************************    
     #true if the query starts with: create database, case insensitive
-    #input should be: create database dbname; OR create database dbname ;
+    #input should be: create database dbname;
     if [[ ${inputLine[0]} =~ ^create$ && ${inputLine[1]} =~ ^database$ ]]
     then
+        #checks the length of the query desn't exceed 3 arguments
+        if [ $inputLength -gt 3 ]
+        then
+            echo "Invalid command"
+            continue
+        fi
+
         #send the 3rd arg (database name) and 4th arg (check if it has ";")
         dbName=${inputLine[2]}
         result="$(check_db_name $dbName ${inputLine[3]})"
 
         #if the query is correct will call the createdb file
-        if [ $result = 1 ]
+        if [[ $result == 1 ]]
         then
             bash dbactions/createdbSQL.sh $dbName
-        elif [ $result = 0 ]
+        elif [[ $result == 0 ]]
         then
             echo "Invalid command"
         else
             bash dbactions/createdbSQL.sh $result
         fi
 
+##********************DROP DATABASE*****************************************
     #true if the query starts with: drop database, case insensitive
-    #input should be: drop database dbname; OR drop database dbname ;
+    #input should be: drop database dbname;
     elif [[ ${inputLine[0]} =~ ^drop$ && ${inputLine[1]} =~ ^database$ ]]
     then
+        #checks the length of the query desn't exceed 3 arguments
+        if [ $inputLength -gt 3 ]
+        then
+            echo "Invalid command"
+            continue
+        fi
+
         dbName=${inputLine[2]}
         result="$(check_db_name $dbName ${inputLine[3]})"
 
-        if [ $result = 1 ]
+        if [[ $result == 1 ]]
         then
             bash dbactions/dropdbSQL.sh $dbName
-        elif [ $result = 0 ]
+        elif [[ $result == 0 ]]
         then
             echo "Invalid command"
         else
             bash dbactions/dropdbSQL.sh $result
         fi
 
+##********************USE DATABASE*****************************************
     #true if the query starts with: use, case insensitive
-    #input should be: use dbname; OR use dbname ;
+    #input should be: use dbname;
     elif [[ ${inputLine[0]} =~ ^use$ ]]
     then
+        #checks the length of the query desn't exceed 2 arguments
+        if [ $inputLength -gt 2 ]
+        then
+            echo "Invalid command"
+            continue
+        fi
+
         dbName=${inputLine[1]}
         result="$(check_db_name $dbName ${inputLine[2]})"
 
-        if [ $result = 1 ]
+        if [[ $result == 1 ]]
         then
             bash dbactions/usedatabaseSQL.sh $dbName
-        elif [ $result = 0 ]
+        elif [[ $result == 0 ]]
         then
             echo "Invalid command"
         else
             bash dbactions/usedatabaseSQL.sh $result
         fi
 
+##********************SHOW DATABASES*****************************************
     #true if the query starts with: show case insensitive
-    #input should be: show databases; OR show databases ;
+    #input should be: show databases;
     elif [[ ${inputLine[0]} =~ ^show$ ]]
     then
+        #checks the length of the query desn't exceed 3 arguments
+        if [ $inputLength -gt 2 ]
+        then
+            echo "Invalid command"
+            continue
+        fi
+
         #true if the 2nd arg is databases and 3rd arg is ";"
         if [[ ${inputLine[1]} =~ ^databases$ && ${inputLine[2]} =~ ";" ]]
         then

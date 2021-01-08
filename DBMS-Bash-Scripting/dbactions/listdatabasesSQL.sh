@@ -16,7 +16,7 @@ else
     echo "+++++++++++++++++++++++++++"
     echo "| Databases               |"
     echo "+++++++++++++++++++++++++++"
-    #loops on the database_names and only printthe third field
+    #loops on the database_names and only print the third field
     #which holds the database name
     while [ $count -lt $length ]
     do

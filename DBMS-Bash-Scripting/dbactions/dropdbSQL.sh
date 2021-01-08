@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "inside dropdb file"
-
 #checks if the DB directory doesn't exist 
 #then will create it
 if ! [[ -d ./DB ]]
@@ -20,15 +18,7 @@ then
 #the input has to be either yY or nN
 elif [[ -d ./DB/$1 ]]
 then
-    read -p "Are you sure you want to delete database $1? [Y/n] " choice
-    case $choice in
-    [Yy] )
-        rm -r ./DB/$1 && echo "The database $1 has been deleted" ;;
-    [Nn] )
-        echo "The deletion has been canceled" ;;
-    * )
-        echo "Invalid input please choose between [Y/n]" ;;
-    esac
+    rm -r ./DB/$1 && echo "The database $1 has been deleted"
 #if the directory doesn't exist then
 #will tell the user
 else

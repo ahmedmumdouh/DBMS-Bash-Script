@@ -78,13 +78,21 @@ then
                     then
                         element=${element%?}
                         parameters+=${element%?}
+                        ((count++))
+                        break
                     else
                         parameters+=$element
                         parameters+="+"
                     fi
                     ((count++))
                 done
-                #echo $parameters
+
+                if [ $length -gt $count ]
+                then
+                    echo "Invalid command"
+                    continue
+                fi
+
                 if [[ ${parameters: 0:1} == "+" ]]
                 then
                     parameters=${parameters: 1}
@@ -106,6 +114,14 @@ then
         #true if the string starts with drop table
         elif [[ ${inputLine[0]} =~ ^drop$ && ${inputLine[1]} =~ ^table$ ]]
         then
+            let inputLength=${#inputLine[*]}
+            #checks the length of the query desn't exceed 3 arguments
+            if [ $inputLength -gt 3 ]
+            then
+                echo "Invalid command"
+                continue
+            fi
+
             tbl_name=${inputLine[2]}
             if [[ ${tbl_name: -1} == ";" ]]
             then
@@ -120,6 +136,14 @@ then
 ##****************SHOW TABLES****************************            
         elif [[ ${inputLine[0]} =~ ^show$ ]]
         then
+            let inputLength=${#inputLine[*]}
+            #checks the length of the query desn't exceed 2 arguments
+            if [ $inputLength -gt 2 ]
+            then
+                echo "Invalid command"
+                continue
+            fi
+
             if [[ ${inputLine[1]} =~ ^tables$ && ${inputLine[2]} = ";" ]]
             then
                 bash ./tableactions/listtablesSQL.sh $1
@@ -132,6 +156,14 @@ then
 ##****************DESC TABLE****************************            
         elif [[ ${inputLine[0]} =~ ^desc$ ]]
         then
+            let inputLength=${#inputLine[*]}
+            #checks the length of the query desn't exceed 2 arguments
+            if [ $inputLength -gt 2 ]
+            then
+                echo "Invalid command"
+                continue
+            fi
+
             if [[ ${inputLine[2]} =~ ";" ]]
             then
                 tbl_name=${inputLine[1]} 
@@ -148,16 +180,29 @@ then
         elif [[ ${inputLine[0]} =~ ^select$ ]]
         then
             let length=${#inputLine[*]}
-            #echo $length
+            
             if [[ ${inputLine[1]} =~ ^[\*]$ && ${inputLine[2]} =~ ^from$ ]]
-            then
+            then            
                 tbl_name=${inputLine[3]}
                 if [[ $tbl_name =~ [\;]$ ]]
                 then
+                    #checks the length of the query desn't exceed 4 arguments
+                    if [ $length -gt 4 ]
+                    then
+                        echo "Invalid command"
+                        continue
+                    fi
                     tbl_name=${tbl_name%?}                    
                     bash ./tableactions/selectSQL.sh $1 $tbl_name
                 elif [[ ${inputLine[$length-4]} =~ ^where$ ]]
                 then
+                    #checks the length of the query desn't exceed 8 arguments
+                    if [ $length -gt 8 ]
+                    then
+                        echo "Invalid command"
+                        continue
+                    fi
+
                     col_name=${inputLine[$length-3]}
                     operator=${inputLine[$length-2]}
                     col_value=${inputLine[$length-1]}
@@ -229,6 +274,16 @@ then
                         fi
                         ((col_count++))                       
                     done
+
+                    let col_count=col_count-1
+                    let check_args=$loop+$col_count
+
+                    #checks the length of the query desn't exceed number of arguments expected
+                    if [ $length -gt $check_args ]
+                    then
+                        echo "Invalid command"
+                        continue
+                    fi
                     
                     if [[ ${col_names: -1} == "+" ]]
                     then
@@ -246,6 +301,13 @@ then
         elif [[ ${inputLine[0]} =~ ^delete$ && ${inputLine[1]} =~ ^from$ && ${inputLine[3]} =~ ^where$ ]]
         then
             let length=${#inputLine[*]}
+            #checks the length of the query desn't exceed 7 arguments
+            if [ $length -gt 7 ]
+            then
+                echo "Invalid command"
+                continue
+            fi
+
             tbl_name=${inputLine[2]}
             col_name=${inputLine[$length-3]}
             operator=${inputLine[$length-2]}
@@ -325,7 +387,9 @@ then
                     if [[ $element =~ [\)\;]$ ]]
                     then
                         element=${element%?}
-                        parameters+=${element%?}                 
+                        parameters+=${element%?}  
+                        ((count++))
+                        break               
                     else
                         if ! [[ $element == "" || $element == " " ]]
                         then
@@ -338,6 +402,15 @@ then
                     fi
                     ((count++))
                 done
+
+                #checks the length of the query desn't exceed 7 arguments
+                if [ $length -gt $count ]
+                then
+                    echo "Invalid command"
+                    continue
+                fi
+
+
                 #if the string of parameters starts with "+"
                 #or ends with "+" will trim both
                 #parameters in the end holds: col1+integer+2+col2+string+10
@@ -357,6 +430,14 @@ then
 ##****************UPDATE TABLE****************************            
         elif [[ ${inputLine[0]} =~ ^update$ && ${inputLine[2]} =~ ^set$ && ${inputLine[6]} =~ ^where$ ]]
         then
+            let length=${#inputLine[*]}
+            #checks the length of the query desn't exceed 10 arguments
+            if [ $length -gt 10 ]
+            then
+                echo "Invalid command"
+                continue
+            fi
+
             tbl_name=${inputLine[1]}
             col_name=${inputLine[3]}
             operator1=${inputLine[4]}
@@ -364,7 +445,7 @@ then
             col_cond_name=${inputLine[7]}
             operator2=${inputLine[8]}
             col_cond_value=${inputLine[9]}
-            echo "$col_name, $col_value, $col_cond_name $col_cond_value"
+            
             if [[ $operator1 != "=" || $operator2 != "=" ]]
             then
                 echo "Invalid command, Check synatx"

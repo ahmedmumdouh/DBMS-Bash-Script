@@ -83,8 +83,6 @@ col_value=$4
 col_cond_name=$5
 col_cond_value=$6
 
-echo "$col_name, $col_value, $col_cond_name $col_cond_value"
-
 if ! [[ $tbl_name =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
 then
     echo "Invalid Input, please check table name"

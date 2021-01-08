@@ -9,15 +9,7 @@ then
     echo ""
 elif [[ -f ./DB/$db_name/$tbl_name ]]
 then
-    read -p "Are you sure you want to delete table $tbl_name? [Y/n] " choice
-    case $choice in
-    [Yy] )
-        rm ./DB/$db_name/$tbl_name && echo "The table $tbl_name has been deleted" ;;
-    [Nn] )
-        echo "The deletion has been canceled" ;;
-    * )
-        echo "Invalid input please choose between [Y/n]" ;;
-    esac
+    rm ./DB/$db_name/$tbl_name && echo "The table $tbl_name has been deleted"
 #if the table doesn't exist then
 #will tell the user
 else
